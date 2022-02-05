@@ -91,8 +91,7 @@ namespace Dictionaryhomework
                         }
                         catch
                         {
-                            ruWord = "Такого слова не существует в словаре.";
-                            Console.WriteLine($"{ruWord}");
+                            SearchOut(enWord);
                         }
                     }
                     else
@@ -119,7 +118,7 @@ namespace Dictionaryhomework
                             Console.WriteLine($"Перевод: {it.Key}");
                             break;
                         }
-                        else if (it.Value == ruWord.ToLower())
+                        else if (SearchOut(ruWord))
                         {
 
                             break;
@@ -127,6 +126,7 @@ namespace Dictionaryhomework
                         else
                         {
                             Console.WriteLine("НЕ НАЙДЕНО");
+                            break;
                         }
                     }
                     Console.WriteLine("Нажмите любую кнопку чтобы продолжить. Консоль очистится!");
@@ -162,7 +162,11 @@ namespace Dictionaryhomework
                         if (Search(enWord))
                             Console.WriteLine("Такое слово уже существует!");
                         else
-                            Console.WriteLine("Такое слово уже существует!");
+                            Console.WriteLine("Отлично. Такого слова не существует!");
+                        Console.WriteLine("Теперь введите перевод на русском языке: ");
+                        ruWord = Console.ReadLine();
+                        dict.Add(enWord.ToLower(), ruWord.ToLower());
+                        Console.WriteLine($"{enWord} - {ruWord}");
                     }
                     finally
                     {
