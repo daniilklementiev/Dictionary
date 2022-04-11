@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dictionaryhomework
+namespace DictionaryExam
 {
-    internal class DictionaryHW
+    internal class DictionaryEX
     {
         public ConsoleKeyInfo keyPressed;
-        Dictionary<String, String> dict = new Dictionary<String, String>();
+        private Dictionary<String, String> dict = new Dictionary<String, String>();
+        private int choiceLang = 2; // 1 - rus, 2 - eng
         public void Run()
         {
             DictionaryEx();
@@ -56,13 +57,39 @@ namespace Dictionaryhomework
                 return false;
 
         }
+
+        public void Language()
+        {
+            Console.WriteLine("----Hello----");
+            Console.WriteLine("Choose language/Выберите язык");
+            Console.WriteLine("1. Русский");
+            Console.WriteLine("2. English");
+            keyPressed = Console.ReadKey(true);
+            if(keyPressed.KeyChar == '1')
+            {
+                choiceLang = 1;
+                Menu();
+            }
+            else if (keyPressed.KeyChar == '2')
+            {
+                choiceLang = 2;
+                Menu();
+            }
+            else
+            {
+                keyPressed = Console.ReadKey(true);
+            }
+        }
+
         public void Menu()
         {
-            Console.WriteLine("Англо-русский словарь");
-            Console.WriteLine("1 - Найти перевод с Английского на Русский");
-            Console.WriteLine("2 - Найти перевод с Русского на Английский");
-            Console.WriteLine("3 - Добавить запись");
-            Console.WriteLine("0 - Выход");
+            Console.WriteLine(choiceLang == 1 ? "Англо-русский словарь" : "Translator");
+            Console.WriteLine(choiceLang == 1 ? "1 - Найти перевод с Английского на Русский"
+                : "1 - Find translate from English to Russian");
+            Console.WriteLine(choiceLang == 1 ? "2 - Найти перевод с Русского на Английский"
+                : "2 - Find translate from Russian to English");
+            Console.WriteLine(choiceLang == 1 ? "3 - Добавить запись" : "3 - Add new word");
+            Console.WriteLine(choiceLang == 1 ? "0 - Выход" : "0 - Exit");
             keyPressed = Console.ReadKey(true);
         }
         public void DictionaryEx()
@@ -71,7 +98,7 @@ namespace Dictionaryhomework
             dict.Add("hello", "привет");
             dict.Add("bye", "пока");
             #region Menu
-            Menu();
+            Language();
             #endregion
 
             while (0 < 1)
@@ -79,15 +106,19 @@ namespace Dictionaryhomework
                 #region Поиск по англ слову
                 if (keyPressed.KeyChar == '1')
                 {
-                    Console.WriteLine("Введите английское слово : ");
+                    Console.WriteLine(choiceLang == 1 ? "Введите английское слово : " 
+                        : "Input english word");
+                    Console.WriteLine("");
                     String enWord = Console.ReadLine();
-                    String ruWord = null;
+                    String ruWord = null!;
                     if (Search(enWord))
                     {
                         try
                         {
                             ruWord = dict[enWord.ToLower()];
-                            Console.WriteLine($"На русском это : {ruWord.ToLower()}");
+                            Console.WriteLine(choiceLang == 1 ? $"На русском это : {ruWord.ToLower()}"
+                       : $"Russian : {ruWord.ToLower()}");
+                            Console.WriteLine();
                         }
                         catch
                         {
@@ -96,10 +127,12 @@ namespace Dictionaryhomework
                     }
                     else
                     {
-                        ruWord = "Такого слова не существует в словаре.";
+                        ruWord = choiceLang == 1 ? "Такого слова не существует в словаре."
+                            : "This word doesn't exist";
                         Console.WriteLine($"{ruWord}");
                     }
-                    Console.WriteLine("Нажмите любую кнопку чтобы продолжить. Консоль очистится!");
+                    Console.WriteLine(choiceLang == 1 ? "Нажмите любую кнопку чтобы продолжить. Консоль очистится!" :
+                        "Press any button. Console will clear");
                     Console.ReadKey();
                     Console.Clear();
                     Menu();
@@ -108,28 +141,31 @@ namespace Dictionaryhomework
                 #region Поиск по русскому слову
                 else if (keyPressed.KeyChar == '2')
                 {
-                    Console.WriteLine("Введите русское слово : ");
+                    Console.WriteLine(choiceLang == 1 ? "Введите русское слово : "
+                        : "Input russian word");
                     String ruWord = Console.ReadLine();
 
                     foreach (var it in dict)
                     {
-                        if (it.Value == ruWord.ToLower())
+                        if (it.Value == ruWord?.ToLower())
                         {
-                            Console.WriteLine($"Перевод: {it.Key}");
+                            Console.WriteLine(choiceLang == 1 ? $"Перевод: {it.Key}" :
+                            $"Translation: {it.Key}");
                             break;
                         }
                         else if (SearchOut(ruWord))
                         {
-
                             break;
                         }
                         else
                         {
-                            Console.WriteLine("НЕ НАЙДЕНО");
+                            Console.WriteLine(choiceLang == 1 ? "Не найдено" :
+                            "Not found");
                             break;
                         }
                     }
-                    Console.WriteLine("Нажмите любую кнопку чтобы продолжить. Консоль очистится!");
+                    Console.WriteLine(choiceLang == 1 ? "Нажмите любую кнопку чтобы продолжить. Консоль очистится!" :
+                        "Press any button. Console will clear");
                     Console.ReadKey();
                     Console.Clear();
                     Menu();
@@ -139,19 +175,31 @@ namespace Dictionaryhomework
                 #region Добавить запись
                 else if (keyPressed.KeyChar == '3')
                 {
-                    Console.WriteLine("Вы хотите добавить слово. Следуйте инструкциям ниже: ");
-                    Console.WriteLine("Введите слово на английском языке: ");
-                    String enWord = Console.ReadLine();
-                    String ruWord = null;
+                    String enWord = null!;
+                    String ruWord = null!;
+                    Console.WriteLine(choiceLang == 1 ? "Вы хотите добавить слово. Следуйте инструкциям ниже: " :
+                        "You want to add a new word. Follow instructions");
+                    Console.WriteLine(choiceLang == 1 ? "Введите слово на английском языке: " :
+                        "Input english word");
                     try
                     {
-                        dict.Add(enWord.ToLower(), ruWord.ToLower());
+                        enWord = Console.ReadLine();
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    try
+                    {
+                        dict.Add(enWord?.ToLower(), ruWord.ToLower());
                         if (!Search(enWord))
                         {
-                            Console.WriteLine("Отлично. Такого слова не существует!");
-                            Console.WriteLine("Теперь введите перевод на русском языке: ");
+                            Console.WriteLine(choiceLang == 1 ? "Отлично. Такого слова не существует!" :
+                                "Gread, word doesn't exist");
+                            Console.WriteLine(choiceLang == 1 ? "Теперь введите перевод на русском языке: " :
+                                "Now input russian word");
                             ruWord = Console.ReadLine();
-                            dict.Add(enWord.ToLower(), ruWord.ToLower());
+                            dict.Add(enWord.ToLower(), ruWord?.ToLower());
                             Console.WriteLine($"{enWord} - {ruWord}");
                         }
                         else
@@ -160,19 +208,21 @@ namespace Dictionaryhomework
                     catch
                     {
                         if (Search(enWord))
-                            Console.WriteLine("Такое слово уже существует!");
-                        else
-                            Console.WriteLine("Отлично. Такого слова не существует!");
-                        Console.WriteLine("Теперь введите перевод на русском языке: ");
-                        ruWord = Console.ReadLine();
-                        dict.Add(enWord.ToLower(), ruWord.ToLower());
-                        Console.WriteLine($"{enWord} - {ruWord}");
+                            Console.WriteLine(choiceLang == 1 ? "Такое слово уже существует!" :
+                                "This word already exist");
+                        else 
+                        {
+                            Console.WriteLine(choiceLang == 1 ? "Отлично. Такого слова не существует!" :
+                                "Gread, word doesn't exist");
+                            Console.WriteLine(choiceLang == 1 ? "Теперь введите перевод на русском языке: " :
+                                "Now input russian word");
+                            ruWord = Console.ReadLine();
+                            dict.Add(enWord.ToLower(), ruWord.ToLower());
+                            Console.WriteLine($"{enWord} - {ruWord}");
+                        }
                     }
-                    finally
-                    {
-
-                    }
-                    Console.WriteLine("Нажмите любую кнопку чтобы продолжить. Консоль очистится!");
+                    Console.WriteLine(choiceLang == 1 ? "Нажмите любую кнопку чтобы продолжить. Консоль очистится!" :
+                        "Press any button. Console will clear");
                     Console.ReadKey();
                     Console.Clear();
                     Menu();
@@ -181,17 +231,21 @@ namespace Dictionaryhomework
                 #region Выход
                 else if (keyPressed.KeyChar == '0')
                 {
-                    Console.WriteLine("Подтвердите выход из программы! Нажмите Enter!");
+                    Console.WriteLine(choiceLang == 1 ? "Подтвердите выход из программы! Нажмите Enter!" :
+                        "Confirm exit with pressing enter");
                     keyPressed = Console.ReadKey();
                     if (keyPressed.Key == (ConsoleKey)13)
                     {
-                        Console.WriteLine("Спасибо за использование нашего словаря! До свидания!");
+                        Console.WriteLine(choiceLang == 1 ? "Спасибо за использование нашего словаря! До свидания!" :
+                            "Thank you for using our dictionary");
                         break;
                     }
                     else
                     {
-                        Console.WriteLine("Вы отменили выход из программы!");
-                        Console.WriteLine("Нажмите любую кнопку чтобы продолжить. Консоль очистится!");
+                        Console.WriteLine(choiceLang == 1 ? "Вы отменили выход из программы!" :
+                            "You canceled exiting");
+                        Console.WriteLine(choiceLang == 1 ? "Нажмите любую кнопку чтобы продолжить. Консоль очистится!" :
+                        "Press any button. Console will clear");
                         Console.ReadKey();
                         Console.Clear();
                     }

@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace Dictionaryhomework
+namespace DictionaryExam
 {
     class Program
     {
         static void Main(string[] args)
         {
-            new DictionaryHW().Run();
+            new DictionaryEX().Run();
         }
     }
 
