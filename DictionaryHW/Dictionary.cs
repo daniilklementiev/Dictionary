@@ -9,8 +9,16 @@ namespace DictionaryExam
     internal class DictionaryEX
     {
         public ConsoleKeyInfo keyPressed;
-        private Dictionary<String, String> dict = new Dictionary<String, String>();
-        private int choiceLang = 2; // 1 - rus, 2 - eng
+        private Dictionary<String, String> dict;
+        private int choiceLang;
+        private string path;
+
+        public DictionaryEX()
+        {
+            choiceLang = 2; // 1 - rus, 2 - eng
+            dict = new Dictionary<String, String>();
+            path = "dictionary.txt";
+        }
         public void Run()
         {
             DictionaryEx();
@@ -92,11 +100,13 @@ namespace DictionaryExam
             Console.WriteLine(choiceLang == 1 ? "0 - Выход" : "0 - Exit");
             keyPressed = Console.ReadKey(true);
         }
-        public void DictionaryEx()
-        {
 
-            dict.Add("hello", "привет");
-            dict.Add("bye", "пока");
+        
+
+        public async Task DictionaryEx()
+        {
+            //await ReadFileAndParse();
+/*
             #region Menu
             Language();
             #endregion
@@ -252,7 +262,7 @@ namespace DictionaryExam
                 }
                 #endregion
 
-            }
+            }*/
         }
     }
 }
