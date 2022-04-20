@@ -3,25 +3,86 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using NLog;
+using Unity;
 namespace DictionaryExam
 {
-    internal class DictionaryEX
+    public partial class DictionaryEX
     {
         public ConsoleKeyInfo keyPressed;
         private Dictionary<String, String> dict;
         private int choiceLang;
-        private string path;
-
-        public DictionaryEX()
+        private static String pathEng;
+        private readonly Logger _logger;
+        public DictionaryEX(Logger logger)
         {
             choiceLang = 2; // 1 - rus, 2 - eng
             dict = new Dictionary<String, String>();
-            path = "dictionary.txt";
+            pathEng = "./dictionary.ini";
+            _logger = logger;
         }
-        public void Run()
+        private static async Task<String> ReadFileAsync(string path)
         {
-            DictionaryEx();
+
+            return await Task.Run(() =>
+            {
+                var sb = new StringBuilder();
+                using (var reader = new StreamReader(path))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        sb.AppendLine(reader.ReadLine());
+                    }
+                }
+                return sb.ToString();
+            });
+        }
+
+        private static async Task<String> WriteFileAsync(String translation)
+        {
+            return await Task.Run(() =>
+            {
+                if(translation != String.Empty)
+                {
+                    using (var writer = new StreamWriter(pathEng))
+                    {
+                        writer.WriteLineAsync(translation);
+                        return "Done";
+                    }
+                }
+                else
+                {
+                    return "Error";
+                }
+               
+
+            });
+        }
+
+        private static async Task<dynamic?> ParseIniAsync(string str)
+        {
+            return await Task.Run(() =>
+            {
+                if (str == null)
+                {
+                    return null;
+                }
+                var lines = str.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                var ret = new Dictionary<String, String>();
+                foreach (var line in lines)
+                {
+                    var data = line.Split('-');
+                    if (data.Length != 2) throw new Exception("Invalid ini format");
+                    ret[data[0].Trim()] = data[1].Trim();
+                }
+                return ret;
+            });
+        }
+
+       
+        public async Task Run()
+        {
+            await DictionaryEx();
         }
 
         public bool SearchOut(String arg)
@@ -105,8 +166,19 @@ namespace DictionaryExam
 
         public async Task DictionaryEx()
         {
-            //await ReadFileAndParse();
-/*
+            /// Load words from file
+            try
+            {
+                var task = ReadFileAsync("./dictionary.ini")
+                        .ContinueWith(task => ParseIniAsync(task.Result).Result);
+                dict = await task;
+            } 
+            catch(Exception ex)
+            {
+                _logger.Warn(ex);
+            }
+            
+
             #region Menu
             Language();
             #endregion
@@ -210,6 +282,7 @@ namespace DictionaryExam
                                 "Now input russian word");
                             ruWord = Console.ReadLine();
                             dict.Add(enWord.ToLower(), ruWord?.ToLower());
+                            await WriteFileAsync(enWord + " - " + ruWord);
                             Console.WriteLine($"{enWord} - {ruWord}");
                         }
                         else
@@ -228,6 +301,7 @@ namespace DictionaryExam
                                 "Now input russian word");
                             ruWord = Console.ReadLine();
                             dict.Add(enWord.ToLower(), ruWord.ToLower());
+                            await WriteFileAsync(enWord + " - " + ruWord);
                             Console.WriteLine($"{enWord} - {ruWord}");
                         }
                     }
@@ -262,7 +336,7 @@ namespace DictionaryExam
                 }
                 #endregion
 
-            }*/
+            }
         }
     }
 }
